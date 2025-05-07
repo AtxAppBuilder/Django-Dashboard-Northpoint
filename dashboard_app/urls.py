@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import MemberList, EventList
+from .views import YouTubeAnalyticsView
 
 urlpatterns = [
-    path('members/', MemberList.as_view(), name='member-list'),
-    path('events/', EventList.as_view(), name='event-list'),
+    path('youtube-analytics/', YouTubeAnalyticsView.as_view(), name='youtube-analytics'),
 ]
