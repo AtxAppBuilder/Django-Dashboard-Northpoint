@@ -8,14 +8,11 @@ class YouTubeAnalytics(models.Model):
     comments = models.IntegerField(default=0)
     channel_id = models.CharField(max_length=255)
     video_id = models.CharField(max_length=100, blank=True)
-    live_views = models.IntegerField(default=0)
-    impressions = models.IntegerField(default=0)
     avg_watch_seconds = models.IntegerField(default=0)
     subs_gained = models.IntegerField(default=0)
     subs_lost = models.IntegerField(default=0)
     net_subs = models.IntegerField(default=0)
     total_subs = models.IntegerField(default=0)
-    ctr = models.FloatField(default=0.0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

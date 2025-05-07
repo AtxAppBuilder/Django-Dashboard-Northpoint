@@ -71,7 +71,7 @@ class YouTubeAnalyticsView(APIView):
                 ids=f'channel=={channel_id}',
                 startDate=start_date.strftime('%Y-%m-%d'),
                 endDate=end_date.strftime('%Y-%m-%d'),
-                metrics='views,likes,comments,subscribersGained,subscribersLost,impressions,avgWatchTimeSeconds,liveViews',
+                metrics='views,likes,comments,subscribersGained,subscribersLost,averageViewDuration',
                 dimensions='day',
             ).execute()
 
@@ -83,9 +83,7 @@ class YouTubeAnalyticsView(APIView):
                 comments = row[3] or 0
                 subs_gained = row[4] or 0
                 subs_lost = row[5] or 0
-                impressions = row[6] or 0
-                avg_watch_seconds = row[7] or 0
-                live_views = row[8] or 0 
+                avg_watch_seconds = row[6] or 0
 
                 analytics_data = YouTubeAnalytics(
                     platform='YouTube',
@@ -95,14 +93,14 @@ class YouTubeAnalyticsView(APIView):
                     comments=comments,
                     channel_id=channel_id,
                     video_id='',
-                    impressions=impressions,
+                    impressions=0,
                     avg_watch_seconds=avg_watch_seconds,
-                    live_views=live_views,
+                    live_views=0,
                     subs_gained=subs_gained,
                     subs_lost=subs_lost,
                     net_subs=subs_gained - subs_lost,
                     total_subs=total_subs,
-                    ctr=(impressions / views) if views > 0 else 0.0  
+                    ctr=0.0 
                 )
                 data_to_store.append(analytics_data)
 
