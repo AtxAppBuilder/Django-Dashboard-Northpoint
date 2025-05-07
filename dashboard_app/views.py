@@ -14,7 +14,7 @@ import pickle
 
 SCOPES = [
     'https://www.googleapis.com/auth/youtube.readonly',
-    'https://www.googleapis.com/auth/yt-analytics.readonly'
+    'https://www.googleapis.com/auth/yt-analytics.readonly',
 ]
 
 TOKEN_PICKLE = 'token.pickle'
@@ -25,12 +25,11 @@ def get_authenticated_service():
     if os.path.exists(TOKEN_PICKLE):
         with open(TOKEN_PICKLE, 'rb') as token:
             credentials = pickle.load(token)
-    if not credentials or not credentials.valid:
-        if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(google.auth.transport.requests.Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
-            credentials = flow.run_local_server(port=0)  # Random port to avoid conflicts
+    if credentials and credentials.expired and credentials.refresh_token:
+        credentials.refresh(google.auth.transport.requests.Request())
+    elif not credentials or not credentials.valid:
+        flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+        credentials = flow.run_local_server(port=0)
         with open(TOKEN_PICKLE, 'wb') as token:
             pickle.dump(credentials, token)
     youtube_analytics = build('youtubeAnalytics', 'v2', credentials=credentials)
@@ -62,6 +61,8 @@ class YouTubeAnalyticsView(APIView):
     def get(self, request):
         youtube_analytics, youtube_data = get_authenticated_service()
         channel_id = 'UC0d9INTRUo3Ady-PLXlVXKQ' 
+        if not channel_id:
+            return Response({'error': 'Could not fetch channel ID'}, status=status.HTTP_400_BAD_REQUEST)
         total_subs = get_channel_data(youtube_data, channel_id)
 
         end_date = datetime.datetime.strptime(get_current_date(), '%Y-%m-%d').date()
